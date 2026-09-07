@@ -478,7 +478,7 @@ gammaU=c(0.5, -1, 0.5);
 
 
 
-ka=find.ka(0.4);knots1=cal.knots(10000); 
+ka=find.ka(0.2);knots1=cal.knots(10000); 
 
 
 
