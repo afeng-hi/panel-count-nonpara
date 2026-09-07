@@ -231,7 +231,7 @@ bots.DE<-function(theta){
 
 library(survival);
 library(splines2);
-group=1;case=1;LAMBDA=LAMBDA1;n=400;tau=10;Obs=6;INN1=4;nknots1=round(2*n^(1/5));num.sim=2;num.bots=100;
+group=1;case=1;LAMBDA=LAMBDA1;n=200;tau=10;Obs=6;INN1=4;nknots1=round(2*n^(1/5));num.sim=2;num.bots=100;
 
 alpha=c(-2, 0.5);
 gammaU=c(0.5, -1, 0.5); 
