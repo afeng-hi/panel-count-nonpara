@@ -8,3 +8,10 @@ Simulation Studies
 - **`Ser_Mean_AFT.R`** implements the simulation study in Section 3.3 of the Supplementary Material, where the terminal event time is generated from a shifted accelerated failure time (AFT) model. 
 - **`Summary.R`** summarizes the simulation output, including the calculation of bias and other reported performance measures, and produces the simulation figures.
 - **`RE.R`** calculates the relative errors (REs) for the estimated nonparametric link function and baseline reversed mean function reported in the manuscript and Supplementary Material.
+
+
+Real Data Analysis
+- **`EstCLHLS-MonthCov.R`** fits the proposed two-stage estimator to the full CLHLS dataset.
+- **`Bots-CLHLS-MonthCov.R`** implements nonparametric bootstrap estimation. 
+- **`boot_master.R`** is the parallel bootstrap driver. It creates 25 workers and runs `Bots-CLHLS-MonthCov.R` once on each worker.
+- **`AnaCLHLS-MonthCov.R`** combines the point estimate from `EstTheta.txt` with the bootstrap estimates from the 25 worker files. 
