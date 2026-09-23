@@ -96,50 +96,44 @@ beta_true_matrix <- matrix(
 )
 
 
-# =====================================================================
-# 计算 beta(x) 的 ISE、MISE 和相对 MISE
-# =====================================================================
 
-# 每次模拟在各网格点上的平方误差
 squared_diff_beta <- (
   beta_hat_matrix - beta_true_matrix
 )^2
 
-# 每次模拟的 integrated squared error
+
 ISE_beta_vec <- rowSums(squared_diff_beta) * dz
 
-# 普通 MISE
+
 MISE_beta <- mean(ISE_beta_vec, na.rm = TRUE)
 
-# ISE 在模拟重复间的标准差
+
 SD_ISE_beta <- sd(ISE_beta_vec, na.rm = TRUE)
 
-# 真实 beta 函数平方的积分
+
 denom_beta <- sum(beta_true^2) * dz
 
 if (!is.finite(denom_beta) || denom_beta <= 0) {
   stop("The integrated squared magnitude of beta_true must be positive.")
 }
 
-# 每次模拟的 relative integrated squared error
+
 RE_beta_vec <- ISE_beta_vec / denom_beta
 
-# 平均 RE，即 beta(x) 的相对 MISE
+
 ReMISE_beta <- mean(RE_beta_vec, na.rm = TRUE)
 
-# RE 在模拟重复间的标准差
+
 SD_RE_beta <- sd(RE_beta_vec, na.rm = TRUE)
 
 
-# =====================================================================
-#计算 Lambda(s) 的估计曲线
-# =====================================================================
 
-# Lambda(s) 的样条系数索引
+
+
 id_xi1_start <- 1
 id_xi1_end <- len1
 
-# 仅使用通过过滤的模拟结果
+
 xi1_est_matrix <- theta.est[
   id,
   id_xi1_start:id_xi1_end,
@@ -158,44 +152,39 @@ Lambda_true_matrix <- matrix(
 )
 
 
-# =====================================================================
-# 计算 Lambda(s) 的 ISE、MISE 和相对 MISE
-# =====================================================================
 
-# 每次模拟在各网格点上的平方误差
+
 squared_diff_Lambda <- (
   Lambda_hat_matrix - Lambda_true_matrix
 )^2
 
-# 每次模拟的 integrated squared error
+
 ISE_Lambda_vec <- rowSums(squared_diff_Lambda) * ds
 
-# 普通 MISE
+
 MISE_Lambda <- mean(ISE_Lambda_vec, na.rm = TRUE)
 
-# ISE 在模拟重复间的标准差
+
 SD_ISE_Lambda <- sd(ISE_Lambda_vec, na.rm = TRUE)
 
-# 真实 Lambda 函数平方的积分
+
 denom_Lambda <- sum(Lambda_true^2) * ds
 
 if (!is.finite(denom_Lambda) || denom_Lambda <= 0) {
   stop("The integrated squared magnitude of Lambda_true must be positive.")
 }
 
-# 每次模拟的 relative integrated squared error
+
 RE_Lambda_vec <- ISE_Lambda_vec / denom_Lambda
 
-# 平均 RE，即 Lambda(s) 的相对 MISE
+
 ReMISE_Lambda <- mean(RE_Lambda_vec, na.rm = TRUE)
 
-# RE 在模拟重复间的标准差
+
 SD_RE_Lambda <- sd(RE_Lambda_vec, na.rm = TRUE)
 
 
-# =====================================================================
-# 9. 输出最终结果
-# =====================================================================
+
 cat("\n=======================================================\n")
 cat("Sample Size (n)                       :", n, "\n")
 cat("Total simulations                    :", nrow(theta.est), "\n")
