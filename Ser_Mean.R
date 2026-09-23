@@ -54,14 +54,14 @@ generate_two_point_data <- function(n, lambda) {
 
 ################# Generate the Data Set ###############################
 Gen.Data=function(n){
-  ### 🟢 数据生成
+
   X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
   rateU=exp(gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2);
   U=pmin(5+rexp(n,rateU),rep(tau,n));C=pmin(5+ka*rexp(n,1),rep(tau,n));Y=pmin(U,C);Delta=(Y==U)+0
   K=sample(1:Obs,n,TRUE);T=matrix(NA,n,Obs)
   for(i in 1:n){T[i,1:K[i]]=sort(runif(K[i]))*Y[i]}   
   
-  ### 🟢 beta_0(x) =2*X^2，alpha =c(-2, 0.5)
+  ###  beta_0(x) =2*X^2，alpha =c(-2, 0.5)
   rateN=exp(alpha[1]*Z1 + alpha[2]*Z2 + 2*X^2);
   
   N=matrix(NA,n,Obs);
@@ -102,7 +102,7 @@ LAMBDA1=function(s){L=s;return(L)}
 ############# Calculate the knots of Spline ###########################
 cal.knots=function(n){
   set.seed(80003)
-  ### 🟢 同步节点计算
+
   X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
   rateU=exp(gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2);
   U=pmin(5+rexp(n,rateU),rep(tau,n));C=pmin(5+ka*rexp(n,1),rep(tau,n));Y=pmin(U,C);Delta=(Y==U)+0
@@ -130,17 +130,17 @@ CalBB=function(Data,t){
 ############# Calculate the Loss Function #############################
 Loss=function(theta){
   L=0;Y=Data$Y;Delta=Data$Delta;T=Data$T;K=Data$K;dN=Data$dN;mm=length(t)
-  ### 🟢 提取 X, Z1, Z2
+
   X=Data$X; Z1=Data$Z1; Z2=Data$Z2;
   
-  ### 🟢 回归到单一非参数项的索引
+
   len1 = INN1+nknots1-1
   len2 = INN2+nknots2-1
   id.xi1   = 1:len1
   id.xi2   = (len1+1) : (len1+len2)          
   id.alpha = (len1+len2+1) : length(theta)
   
-  ### 🟢 线性预测包含 alpha_1*Z1 + alpha_2*Z2
+
   Zmat = cbind(Z1, Z2)
   expcoeff=exp(Zmat %*% theta[id.alpha] + BB2[2:(n+1),] %*% theta[id.xi2])
   
@@ -173,7 +173,7 @@ cal.DE<-function(theta){
   for(i in which(Delta==1)){for(j in 1:K[i]){
     gk[id.xi1]=gk[id.xi1]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*expcoeff[i]*dBB1[rank[i],i,j,]
     gk[id.xi2]=gk[id.xi2]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[rank[i],i,j])*BB2[(i+1),]
-    ### 🟢 梯度按向量 c(Z1[i], Z2[i]) 更新两个 alpha 参数
+
     gk[id.alpha]=gk[id.alpha]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[rank[i],i,j])*c(Z1[i], Z2[i])
   }}
   
@@ -201,7 +201,7 @@ Genbots.Data=function(Data){
   nnn=length(Data$Y)
   id=sample(1:nnn,nnn,rep=T)
   Y=Data$Y[id];Delta=Data$Delta[id];N=Data$N[id,];T=Data$T[id,];K=Data$K[id]
-  ### 🟢 提取 X, Z1, Z2
+
   X=Data$X[id]; Z1=Data$Z1[id]; Z2=Data$Z2[id]; dN=Data$dN[id,];
   return(list(Y=Y,Delta=Delta,N=N,T=T,K=K,X=X,Z1=Z1,Z2=Z2,dN=dN,id=id))
 }
@@ -278,9 +278,8 @@ library(survival);
 library(splines2);
 group=2;case=1;LAMBDA=LAMBDA1;n=200;tau=10;Obs=6;INN1=4;INN2=4;nknots1=round(2*n^(1/5));nknots2=round(n^(1/5));num.sim=2;num.bots=100;
 
-### 🟢 真实参数 alpha 现在有两个 (-2, 0.5)
+
 alpha=c(-2, 0.5);
-### 🟢 gammaU 有3个参数对应 (X, Z1, Z2)
 gammaU=c(0.5, -1, 0.5); 
 
 ka=find.ka(0.2);knots1=cal.knots(10000);knots2=seq(1/(nknots2+1),nknots2/(nknots2+1),1/(nknots2+1))
