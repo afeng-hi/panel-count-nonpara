@@ -246,7 +246,7 @@ total_len = len1 + num_para
 theta.est=matrix(NA,num.sim,total_len); gammaU.est=matrix(NA,num.sim,length(gammaU));
 bots.theta=array(NA,c(num.sim,num.bots,total_len));
 
-# 约束矩阵
+
 AA=cbind(cbind(diag(-1,len1)[,2:len1],rep(0,len1))+diag(1,len1),matrix(0,len1,num_para));
 BB=c(rep(0,len1),rep(-5,2*num_para));
 AA=rbind(AA, cbind(matrix(0,num_para,len1),diag(1,num_para)),
