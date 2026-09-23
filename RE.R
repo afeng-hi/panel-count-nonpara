@@ -55,10 +55,10 @@ BB2_grid <- bSpline(
 s_grid <- seq(0, tau, length.out = num_grid)
 ds <- s_grid[2] - s_grid[1]
 
-# 真实 baseline reversed mean function: Lambda_0(s) = s
+
 Lambda_true <- s_grid
 
-# Lambda(s) 的 B-spline 基函数矩阵
+
 BB1_grid <- bSpline(
   s_grid,
   df = INN1,
@@ -69,25 +69,23 @@ BB1_grid <- bSpline(
 )
 
 
-# =====================================================================
-#计算 beta(x) 的估计曲线
-# =====================================================================
 
-# beta(x) 的样条系数索引
+
+
 id_xi2_start <- len1 + 1
 id_xi2_end <- len1 + len2
 
-# 仅使用通过过滤的模拟结果
+
 xi2_est_matrix <- theta.est[
   id,
   id_xi2_start:id_xi2_end,
   drop = FALSE
 ]
 
-# 每一行对应一次模拟得到的 beta(x) 估计曲线
+
 beta_hat_matrix <- xi2_est_matrix %*% t(BB2_grid)
 
-# 将真实 beta(x) 复制为矩阵
+
 beta_true_matrix <- matrix(
   beta_true,
   nrow = nrow(beta_hat_matrix),
