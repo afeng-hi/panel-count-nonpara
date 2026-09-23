@@ -9,9 +9,9 @@ find.ka<-function(rate){
   low=0.01; high=10; tol=1e-8
   n=50000
   calculate.rate<-function(ka){
-    ### 🟢 X服从均匀分布, Z1服从二项分布, Z2服从标准正态分布
+
     X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
-    ### 🟢 对应 gammaU 的三个系数
+
     rateU=exp(gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2);
     U=pmin(5+rexp(n,rateU),rep(tau,n));C=pmin(5+ka*rexp(n,1),rep(tau,n))
     delta=ifelse(U<C,1,0)
@@ -30,14 +30,14 @@ find.ka<-function(rate){
 
 ################# Generate the Data Set ###############################
 Gen.Data=function(n){
-  ### 🟢 数据生成
+
   X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
   rateU=exp(gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2);
   U=pmin(5+rexp(n,rateU),rep(tau,n));C=pmin(5+ka*rexp(n,1),rep(tau,n));Y=pmin(U,C);Delta=(Y==U)+0
   K=sample(1:Obs,n,TRUE);T=matrix(NA,n,Obs)
   for(i in 1:n){T[i,1:K[i]]=sort(runif(K[i]))*Y[i]}   
   
-  ### 🟢 beta_0(x) =2*X^2，alpha =c(-2, 0.5), Linear:beta_0(x)=3X
+  ### beta_0(x) =2*X^2，alpha =c(-2, 0.5), Linear:beta_0(x)=3X
   rateN=exp(alpha[1]*Z1 + alpha[2]*Z2 + 2*X^2);
   
   N=matrix(NA,n,Obs);
@@ -63,7 +63,7 @@ LAMBDA1=function(s){L=s;return(L)}
 ############# Calculate the knots of Spline ###########################
 cal.knots=function(n){
   set.seed(80003)
-  ### 🟢 同步节点计算
+
   X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
   rateU=exp(gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2);
   U=pmin(5+rexp(n,rateU),rep(tau,n));C=pmin(5+ka*rexp(n,1),rep(tau,n));Y=pmin(U,C);Delta=(Y==U)+0
@@ -91,17 +91,17 @@ CalBB=function(Data,t){
 ############# Calculate the Loss Function #############################
 Loss=function(theta){
   L=0;Y=Data$Y;Delta=Data$Delta;T=Data$T;K=Data$K;dN=Data$dN;mm=length(t)
-  ### 🟢 提取 X, Z1, Z2
+
   X=Data$X; Z1=Data$Z1; Z2=Data$Z2;
   
-  ### 🟢 回归到单一非参数项的索引
+
   len1 = INN1+nknots1-1
   len2 = INN2+nknots2-1
   id.xi1   = 1:len1
   id.xi2   = (len1+1) : (len1+len2)          
   id.alpha = (len1+len2+1) : length(theta)
   
-  ### 🟢 线性预测包含 alpha_1*Z1 + alpha_2*Z2
+
   Zmat = cbind(Z1, Z2)
   expcoeff=exp(Zmat %*% theta[id.alpha] + BB2[2:(n+1),] %*% theta[id.xi2])
   
@@ -134,7 +134,7 @@ cal.DE<-function(theta){
   for(i in which(Delta==1)){for(j in 1:K[i]){
     gk[id.xi1]=gk[id.xi1]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*expcoeff[i]*dBB1[rank[i],i,j,]
     gk[id.xi2]=gk[id.xi2]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[rank[i],i,j])*BB2[(i+1),]
-    ### 🟢 梯度按向量 c(Z1[i], Z2[i]) 更新两个 alpha 参数
+
     gk[id.alpha]=gk[id.alpha]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[rank[i],i,j])*c(Z1[i], Z2[i])
   }}
   
@@ -162,7 +162,7 @@ Genbots.Data=function(Data){
   nnn=length(Data$Y)
   id=sample(1:nnn,nnn,rep=T)
   Y=Data$Y[id];Delta=Data$Delta[id];N=Data$N[id,];T=Data$T[id,];K=Data$K[id]
-  ### 🟢 提取 X, Z1, Z2
+
   X=Data$X[id]; Z1=Data$Z1[id]; Z2=Data$Z2[id]; dN=Data$dN[id,];
   return(list(Y=Y,Delta=Delta,N=N,T=T,K=K,X=X,Z1=Z1,Z2=Z2,dN=dN,id=id))
 }
@@ -256,7 +256,7 @@ nknots2 = round(n^(1/5))
 num.sim = 2
 num.bots = 100
 
-## 真实参数
+
 alpha = c(-2, 0.5)
 gammaU = c(0.5, -1, 0.5)
 
@@ -270,9 +270,7 @@ knots2 = seq(
   1 / (nknots2 + 1)
 )
 
-#######################################################################
-## 参数维数
-#######################################################################
+
 
 len1 = INN1 + nknots1 - 1
 len2 = INN2 + nknots2 - 1
@@ -297,23 +295,11 @@ bots.theta = array(
   dim = c(num.sim, num.bots, total_len)
 )
 
-#######################################################################
-## 约束矩阵
-##
-## 参数排列：
-## theta = c(xi1, xi2, alpha)
-##
-## xi1：Lambda_0(s) 的样条系数
-## xi2：beta_0(x) 的样条系数
-## alpha：Z1、Z2 的参数系数
-#######################################################################
 
-## Lambda_0(s) 的样条系数约束：
-##
-## xi1[1] >= 0
-## xi1[2] - xi1[1] >= 0
-## ...
-## xi1[len1] - xi1[len1 - 1] >= 0
+
+
+
+
 
 D1 = cbind(
   diag(-1, len1)[, 2:len1, drop = FALSE],
@@ -342,7 +328,7 @@ AA.alpha.lower = cbind(
 )
 
 ## alpha <= 5
-## 等价于 -alpha >= -5
+
 AA.alpha.upper = cbind(
   matrix(
     0,
@@ -352,7 +338,7 @@ AA.alpha.upper = cbind(
   diag(-1, num_para)
 )
 
-## 合并所有约束
+
 AA = rbind(
   AA.lambda,
   AA.alpha.lower,
@@ -365,7 +351,7 @@ BB = c(
   rep(-5, num_para)
 )
 
-## 检查约束矩阵维数
+
 stopifnot(
   ncol(AA) == total_len,
   nrow(AA) == length(BB)
@@ -383,12 +369,7 @@ for (id.sim in 1:num.sim) {
   
   Data = Gen.Data(n)
   
-  #####################################################################
-  ## 初始值
-  ##
-  ## 参数排列：
-  ## c(xi1, xi2, alpha)
-  #####################################################################
+
   
   Init = c(
     1:len1,
@@ -398,7 +379,7 @@ for (id.sim in 1:num.sim) {
   
   stopifnot(length(Init) == total_len)
   
-  ## 检查初始值是否满足约束
+
   if (any(drop(AA %*% Init - BB) < 0)) {
     stop("Initial value does not satisfy the constraints.")
   }
@@ -444,12 +425,10 @@ for (id.sim in 1:num.sim) {
     }
   }
   
-  ## CalBB() 返回的对象名称是 dBB1
+
   dBB1 = CalBB(Data, t)$dBB1
   
-  #####################################################################
-  ## beta_0(x) 的 B-spline 基函数
-  #####################################################################
+
   
   BB2 = bSpline(
     c(0, Data$X, 1),
@@ -459,9 +438,7 @@ for (id.sim in 1:num.sim) {
     intercept = FALSE
   )
   
-  #####################################################################
-  ## 主样本估计
-  #####################################################################
+
   
   optim.est = constrOptim(
     theta = Init,
@@ -472,7 +449,7 @@ for (id.sim in 1:num.sim) {
     method = "BFGS"
   )
   
-  ## 检查优化结果是否满足约束
+
   constraint.value = drop(
     AA %*% optim.est$par - BB
   )
@@ -487,7 +464,7 @@ for (id.sim in 1:num.sim) {
     )
   }
   
-  ## Bootstrap 使用主样本估计作为初始值
+
   Init = optim.est$par
   
   theta.est[id.sim, ] = optim.est$par
@@ -552,15 +529,13 @@ for (id.sim in 1:num.sim) {
       }
     }
     
-    ## CalBB() 返回的对象名称是 dBB1
+
     bots.dBB1 = CalBB(
       bots.Data,
       bots.t
     )$dBB1
     
-    ###############################################################
-    ## Bootstrap beta_0(x) 的 B-spline 基函数
-    ###############################################################
+
     
     bots.BB2 = bSpline(
       c(0, bots.Data$X, 1),
@@ -586,9 +561,7 @@ for (id.sim in 1:num.sim) {
     bots.theta[id.sim, i.bots, ] = bots.est$par
   }
   
-  #####################################################################
-  ## 保存结果
-  #####################################################################
+ 
   
   write.table(
     theta.est[id.sim, ],
