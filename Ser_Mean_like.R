@@ -62,7 +62,7 @@ Gen.Data=function(n){
   
   N=matrix(NA,n,Obs);
   gam=rgamma(n,shape=4,scale=1/4)  
-  # gam=rep(1,n)
+
   if(group==1){for(i in 1:n){
     N[i,1]=rpois(1,gam[i]*(LAMBDA(U[i])-LAMBDA(U[i]-T[i,1]))*rateN[i])
     if(K[i]!=1){for(j in 2:K[i]){N[i,j]=rpois(1,gam[i]*rateN[i]*(LAMBDA(U[i]-T[i,j-1])-LAMBDA(U[i]-T[i,j])))+N[i,j-1]}}
@@ -177,25 +177,25 @@ cal.DE <- function(theta) {
   id.xi2   = (len1+1) : (len1+len2)
   id.alpha = (len1+len2+1) : length(theta)
   
-  # 预先计算出 E_i
+
   expcoeff = exp(as.matrix(cbind(Z1, Z2)) %*% theta[id.alpha] + BB2_X %*% theta[id.xi2])
   
-  # (1) 对于发生事件的样本 Delta == 1
+
   for(i in which(Delta==1)) {
     for(j in 1:K[i]) {
       mu = c(expcoeff[i] * (t(theta[id.xi1]) %*% dBB1[rank[i],i,j,]))
-      mu = max(mu, 1e-8)  # 防御机制
+      mu = max(mu, 1e-8)
       
       diff_mu = mu - dN[i,j]
       
-      # 依据公式累加梯度
+
       gk[id.xi1]   = gk[id.xi1]   + (1 - dN[i,j]/mu) * expcoeff[i] * dBB1[rank[i],i,j,]
       gk[id.xi2]   = gk[id.xi2]   + diff_mu * BB2_X[i,]
       gk[id.alpha] = gk[id.alpha] + diff_mu * c(Z1[i], Z2[i])
     }
   }
   
-  # (2) 对于删失的样本 Delta == 0
+
   for(i in which(Delta==0)) {
     if(sur[rank[i]] != 0 && (rank[i] != mm)) {
       temp_gk = rep(0, length(theta))
@@ -208,13 +208,13 @@ cal.DE <- function(theta) {
           
           diff_mu = mu - dN[i,j]
           
-          # 累加带概率权重的梯度
+   
           temp_gk[id.xi1]   = temp_gk[id.xi1]   + prob_diff * (1 - dN[i,j]/mu) * expcoeff[i] * dBB1[m,i,j,]
           temp_gk[id.xi2]   = temp_gk[id.xi2]   + prob_diff * diff_mu * BB2_X[i,]
           temp_gk[id.alpha] = temp_gk[id.alpha] + prob_diff * diff_mu * c(Z1[i], Z2[i])
         }
       }
-      # 除以分母的生存概率并累加到总梯度
+
       if((sur[rank[i]]^Uexpcoeff[i]) > 0.1^8) {
         gk = gk + temp_gk / (sur[rank[i]]^Uexpcoeff[i])
       }
