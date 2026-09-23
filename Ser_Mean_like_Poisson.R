@@ -78,7 +78,7 @@ Gen.Data=function(n){
   
   N=matrix(NA,n,Obs);
   
-  # gam=rgamma(n,shape=2,scale=1/2)  
+
   
   gam=rep(1,n)
   
@@ -116,7 +116,7 @@ Gen.Data=function(n){
 
 LAMBDA1=function(s){L=s;return(L)}
 
-# LAMBDA2=function(s){L=3*sqrt(s);return(L)}
+
 
 #######################################################################
 
@@ -282,13 +282,13 @@ cal.DE <- function(theta) {
   
   
   
-  # 预先计算出 E_i
+
   
-  expcoeff = exp(as.matrix(cbind(Z1, Z2)) %*% theta[id.alpha] + BB2_X %*% theta[id.xi2])
+  expcoeff = exp(as.matrix(cbind(Z1, Z2))
   
   
   
-  # (1) 对于发生事件的样本 Delta == 1
+
   
   for(i in which(Delta==1)) {
     
@@ -296,7 +296,7 @@ cal.DE <- function(theta) {
       
       mu = c(expcoeff[i] * (t(theta[id.xi1]) %*% dBB1[rank[i],i,j,]))
       
-      mu = max(mu, 1e-8)  # 防御机制
+      mu = max(mu, 1e-8)  
       
       
       
@@ -304,7 +304,7 @@ cal.DE <- function(theta) {
       
       
       
-      # 依据公式累加梯度
+
       
       gk[id.xi1]   = gk[id.xi1]   + (1 - dN[i,j]/mu) * expcoeff[i] * dBB1[rank[i],i,j,]
       
@@ -318,7 +318,7 @@ cal.DE <- function(theta) {
   
   
   
-  # (2) 对于删失的样本 Delta == 0
+
   
   for(i in which(Delta==0)) {
     
@@ -344,7 +344,6 @@ cal.DE <- function(theta) {
           
           
           
-          # 累加带概率权重的梯度
           
           temp_gk[id.xi1]   = temp_gk[id.xi1]   + prob_diff * (1 - dN[i,j]/mu) * expcoeff[i] * dBB1[m,i,j,]
           
@@ -356,7 +355,7 @@ cal.DE <- function(theta) {
         
       }
       
-      # 除以分母的生存概率并累加到总梯度
+
       
       if((sur[rank[i]]^Uexpcoeff[i]) > 0.1^8) {
         
