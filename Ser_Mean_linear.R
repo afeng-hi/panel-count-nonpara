@@ -70,7 +70,7 @@ Gen.Data=function(n){
   
   
   
-  ### 🟢 数据生成保持真实关系 2*X^2 不变
+
   
   rateN=exp(alpha[1]*Z1 + alpha[2]*Z2 + 2*X^2);
   
@@ -180,8 +180,7 @@ Loss=function(theta){
   
   
   
-  ### 🟢 修改: 移除了 BB2，只有基线 splines 和 3个纯线性参数
-  
+
   len1 = INN1+nknots1-1
   
   id.xi1  = 1:len1
@@ -189,8 +188,7 @@ Loss=function(theta){
   id.para = (len1+1) : length(theta)
   
   
-  
-  ### 🟢 修改: 三个变量全部用作线性预测
+
   
   Wmat = cbind(X, Z1, Z2)
   
@@ -235,9 +233,7 @@ cal.DE<-function(theta){
   X=Data$X; Z1=Data$Z1; Z2=Data$Z2;
   
   
-  
-  ### 🟢 修改: 同步索引
-  
+
   len1 = INN1+nknots1-1
   
   id.xi1  = 1:len1
@@ -258,7 +254,7 @@ cal.DE<-function(theta){
     
     gk[id.xi1]=gk[id.xi1]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*expcoeff[i]*dBB1[rank[i],i,j,]
     
-    ### 🟢 修改: 一次性更新 3 个线性参数的梯度
+
     
     gk[id.para]=gk[id.para]+2*(c(expcoeff[i]*Lambdatheta[rank[i],i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[rank[i],i,j])*Wmat[i,]
     
@@ -276,7 +272,7 @@ cal.DE<-function(theta){
         
         temp1=temp1+(sur[m-1]^Uexpcoeff[i]-sur[m]^Uexpcoeff[i])*2*(c(expcoeff[i]*Lambdatheta[m,i,j])-dN[i,j])*expcoeff[i]*dBB1[m,i,j,]
         
-        ### 🟢 修改
+  
         
         temp_para=temp_para+(sur[m-1]^Uexpcoeff[i]-sur[m]^Uexpcoeff[i])*2*(c(expcoeff[i]*Lambdatheta[m,i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[m,i,j])*Wmat[i,]
         
@@ -332,7 +328,6 @@ bots.Loss=function(theta){
   
   
   
-  ### 🟢 修改
   
   len1 = INN1+nknots1-1
   
@@ -392,7 +387,7 @@ bots.DE<-function(theta){
   
   
   
-  ### 🟢 修改
+
   
   len1 = INN1+nknots1-1
   
@@ -414,7 +409,7 @@ bots.DE<-function(theta){
     
     gk[id.xi1]=gk[id.xi1]+2*(c(expcoeff[i]*Lambdatheta[bots.rank[i],i,j])-dN[i,j])*expcoeff[i]*bots.dBB1[bots.rank[i],i,j,]
     
-    ### 🟢 修改
+
     
     gk[id.para]=gk[id.para]+2*(c(expcoeff[i]*Lambdatheta[bots.rank[i],i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[bots.rank[i],i,j])*Wmat[i,]
     
@@ -434,7 +429,7 @@ bots.DE<-function(theta){
           
           temp1=temp1+(bots.sur[m-1]^bots.Uexpcoeff[i]-bots.sur[m]^bots.Uexpcoeff[i])*2*(c(expcoeff[i]*Lambdatheta[m,i,j])-dN[i,j])*expcoeff[i]*bots.dBB1[m,i,j,]
           
-          ### 🟢 修改
+
           
           temp_para=temp_para+(bots.sur[m-1]^bots.Uexpcoeff[i]-bots.sur[m]^bots.Uexpcoeff[i])*2*(c(expcoeff[i]*Lambdatheta[m,i,j])-dN[i,j])*c(expcoeff[i]*Lambdatheta[m,i,j])*Wmat[i,]
           
@@ -470,7 +465,7 @@ group=1;case=1;LAMBDA=LAMBDA1;n=200;tau=10;Obs=6;INN1=4;nknots1=round(2*n^(1/5))
 
 
 
-### 🟢 移除了 INN2, nknots2 和 knots2
+
 
 alpha=c(-2, 0.5);
 
@@ -482,7 +477,7 @@ ka=find.ka(0.2);knots1=cal.knots(10000);
 
 
 
-### 🟢 修改: 新的参数总长度 (基线B样条 + 3个线性参数)
+
 
 len1 = INN1+nknots1-1
 
@@ -571,8 +566,7 @@ for(id.sim in 1:num.sim){
   dBB1=CalBB(Data,t)$dBB1;
   
   
-  ### 🟢 移除了 BB2 的生成
-  
+
   
   
   optim.est=constrOptim(Init,Loss,cal.DE,AA,BB,method = "BFGS")
