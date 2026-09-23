@@ -78,7 +78,7 @@ upper_x = apply(all_y_x, 1, quantile, probs = 0.975, na.rm = TRUE)
 
 
 
-# ===================== Lambda_0(s) 画图 =====================
+# ===================== Lambda_0(s)=====================
 plot(x_lam, true_lam, type="l", col="black", lty=1, lwd=2, 
      ylim=range(c(lower_lam, upper_lam, true_lam, y_lam), na.rm=TRUE),
      ylab=expression(Lambda), xlab="s", main="n=400 and censoring rate=40%")
@@ -95,7 +95,7 @@ legend("topleft", lty=c(1, 2, 4), col=c("black", "red", "blue"),
        lwd=c(2, 2, 1.5), legend=c("True Function", "Mean of the Estimates", "Pointwise Percentiles"))
 
 
-# ===================== beta(x) 画图 =====================
+# ===================== beta(x) =====================
 plot(x_x, true_x, type="l", col="black", lty=1, lwd=2, 
      ylim=range(c(lower_x, upper_x, true_x, y_x), na.rm=TRUE),
      ylab=expression(beta), xlab="x", main="n=400 and censoring rate=40%")
