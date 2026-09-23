@@ -11,7 +11,7 @@ find.ka<-function(rate){
   calculate.rate<-function(ka){
     X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
     
-    ### 误识别测试：改为 AFT (Log-Normal) 模型生成真实生存时间 U
+
     LP = gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2
     error_term = rnorm(n, mean = 0, sd = 0.5) 
     T_AFT = exp(-LP + error_term)
@@ -36,7 +36,7 @@ find.ka<-function(rate){
 Gen.Data=function(n){
   X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
   
-  ### 改为 AFT模型生成
+
   LP = gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2
   error_term = rnorm(n, mean = 0, sd = 0.5)
   T_AFT = exp(-LP + error_term)
@@ -74,7 +74,7 @@ cal.knots=function(n){
   set.seed(80003)
   X=runif(n); Z1=rbinom(n,1,0.5); Z2=rnorm(n,0,1);
   
-  ### 改为AFT模型生成
+
   LP = gammaU[1]*X + gammaU[2]*Z1 + gammaU[3]*Z2
   error_term = rnorm(n, mean = 0, sd = 0.5)
   T_AFT = exp(-LP + error_term)
@@ -316,7 +316,7 @@ for(id.sim in 1:num.sim){
     all(drop(AA %*% Init - BB) >= 0)
   )
   
-  ### cox拟合
+
   cox=coxph(Surv(Y, Delta) ~ X + Z1 + Z2, Data);
   gammaUhat=cox$coefficients;sur=survfit(cox)$surv;t=survfit(cox)$time
   Uexpcoeff=exp(cbind(Data$X, Data$Z1, Data$Z2)%*%gammaUhat);rank=rep(NA,n);
